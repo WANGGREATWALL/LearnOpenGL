@@ -1,7 +1,7 @@
 {
-    "version": "0.0.2",
+    "version": "0.0.3",
 
-    "name": "张三",
+    "name": "张四",
     "age": 18,
     "gender": true,
     "hobbies": ["篮球", "足球", "电影"],
