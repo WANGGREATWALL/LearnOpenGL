@@ -1,7 +1,10 @@
-# cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.10)
 
 project(LearnOpenGL)
 
 include_directories(./depends)
 
-add_executable(opengl_tutorials main.cpp)
+link_directories(./libs)
+link_libraries(glfw3 opengl32)
+
+add_executable(LearnOpenGL src/main.cpp depends/glad/glad.c)
