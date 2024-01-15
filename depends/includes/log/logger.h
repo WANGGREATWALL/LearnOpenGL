@@ -57,7 +57,7 @@ extern volatile int G_LEVEL_LOGGER;
 
 #define CHECK_WITH_INFO(expression, ret, fmt, ...) \
 	if (!(expression)) { \
-        printf("%s %s" fmt " (%s:%d)\n", TAG_LOGGER, TAG_LOGGER_ERROR, ##__VA_ARGS__, __FILE__, __LINE__); \
+        LOGGER_E(fmt " (%s:%d)\n", ##__VA_ARGS__ , __FILE__, __LINE__); \
 		return ret; \
 	}
 
