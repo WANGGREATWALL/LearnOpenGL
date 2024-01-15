@@ -2,3 +2,8 @@ cmake_minimum_required(VERSION 3.10)
 project(LearnOpenGL)
 
 add_subdirectory(src/demo2_1)
+add_subdirectory(src/demo2_2)
+add_subdirectory(src/demo2_3)
+add_subdirectory(src/demo2_4)
+add_subdirectory(src/demo2_5)
+add_subdirectory(src/demo2_6)

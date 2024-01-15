@@ -1,12 +1,13 @@
-#include <string>
-#include <fstream>
 #include <iostream>
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+
 #include <log/logger.h>
-
-#include <glad.h>
-#include <glfw3.h>
-
 volatile int G_LEVEL_LOGGER = 0;
+
+#define WINDOW_TITLE "demo2_1"
+
+void init(GLFWwindow* window) {}
 
 void display(GLFWwindow* window, double currentTime)
 {
@@ -24,7 +25,7 @@ int main()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    GLFWwindow* window = glfwCreateWindow(600, 600, __FUNCTION__, nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(600, 600, WINDOW_TITLE, nullptr, nullptr);
     if (window == nullptr) {
         LOGGER_E("Failed to create GLFW window! (%s:%d)\n", __FILE__, __LINE__);
         glfwTerminate();
