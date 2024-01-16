@@ -1,6 +1,8 @@
 {
     "cmake.configureOnOpen": true,
     "files.associations": {
-        "ostream": "cpp"
+        "*.txt": "cmake",
+        "ostream": "cpp",
+        "cmath": "cpp"
     }
 }

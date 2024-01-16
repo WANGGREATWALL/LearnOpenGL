@@ -1,13 +1,15 @@
-#include <GL/glew.h>
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <SOIL2/soil2.h>
+// #include <SOIL2/soil2.h>
 #include <string>
 #include <iostream>
 #include <fstream>
 #include <cmath>
 #include <vector>
 #include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/type_ptr.hpp> // glm::value_ptr
+#include <glm/gtc/matrix_transform.hpp> // glm::translate, glm::rotate, glm::scale, glm::perspective
+#include <glm/gtx/euler_angles.hpp>
 
 class Utils
 {
@@ -27,8 +29,8 @@ public:
 	static GLuint createShaderProgram(const char *vp, const char *gp, const char *fp);
 	static GLuint createShaderProgram(const char *vp, const char *tCS, const char* tES, const char *fp);
 	static GLuint createShaderProgram(const char *vp, const char *tCS, const char* tES, char *gp, const char *fp);
-	static GLuint loadTexture(const char *texImagePath);
-	static GLuint loadCubeMap(const char *mapDir);
+	// static GLuint loadTexture(const char *texImagePath);
+	// static GLuint loadCubeMap(const char *mapDir);
 
 	static float* goldAmbient();
 	static float* goldDiffuse();
