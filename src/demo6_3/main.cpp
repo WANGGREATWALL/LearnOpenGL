@@ -12,63 +12,76 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include <Utils.h>
+#include <ImportedModel.h>
 
 #include <log/logger.h>
 volatile int G_LEVEL_LOGGER = 0;
 
-#define WINDOW_TITLE "demo5_1"
+#define WINDOW_TITLE "demo6_3"
 #define numVAOs 1
-#define numVBOs 2
+#define numVBOs 3
 
 float cameraX, cameraY, cameraZ;
-float cubeLocX, cubeLocY, cubeLocZ;
+float objLocX, objLocY, objLocZ;
 GLuint renderingProgram;
-GLuint vao[numVAOs]; GLuint vbo[numVBOs];
+GLuint vao[numVAOs];
+GLuint vbo[numVBOs];
+GLuint shuttleTexture;
 
 GLuint mvLoc, projLoc;
 int width, height;
 float aspect;
 glm::mat4 pMat, vMat, mMat, mvMat;
 
-GLuint iceTexture;
+ImportedModel myModel("shuttle.obj");
 
 void setupVertices()
 {
-    // 18 vertices, 6 triangles, 18*3=54 coords
-	float pyramidPositions[54] =
-	{ -1.0f, -1.0f, 1.0f, 1.0f, -1.0f, 1.0f, 0.0f, 1.0f, 0.0f,    //front
-		1.0f, -1.0f, 1.0f, 1.0f, -1.0f, -1.0f, 0.0f, 1.0f, 0.0f,    //right
-		1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, 0.0f, 1.0f, 0.0f,  //back
-		-1.0f, -1.0f, -1.0f, -1.0f, -1.0f, 1.0f, 0.0f, 1.0f, 0.0f,  //left
-		-1.0f, -1.0f, -1.0f, 1.0f, -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, //LF
-		1.0f, -1.0f, 1.0f, -1.0f, -1.0f, -1.0f, 1.0f, -1.0f, -1.0f  //RR
-	};
+    std::vector<glm::vec3> vert = myModel.getVertices();
+	std::vector<glm::vec2> tex = myModel.getTextureCoords();
+	std::vector<glm::vec3> norm = myModel.getNormals();
 
-    float pyramidTexCoords[36] = {
-        0.0f, 0.0f, 1.0f, 0.0f, 0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.5f, 1.0f,
-        0.0f, 0.0f, 1.0f, 0.0f, 0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.5f, 1.0f,
-        0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f
-    };
+	std::vector<float> pvalues;
+	std::vector<float> tvalues;
+	std::vector<float> nvalues;
+
+	for (int i = 0; i < myModel.getNumVertices(); i++) {
+		pvalues.push_back((vert[i]).x);
+		pvalues.push_back((vert[i]).y);
+		pvalues.push_back((vert[i]).z);
+		tvalues.push_back((tex[i]).s);
+		tvalues.push_back((tex[i]).t);
+		nvalues.push_back((norm[i]).x);
+		nvalues.push_back((norm[i]).y);
+		nvalues.push_back((norm[i]).z);
+	}
 
 	glGenVertexArrays(1, vao);
 	glBindVertexArray(vao[0]);
 	glGenBuffers(numVBOs, vbo);
 
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(pyramidPositions), pyramidPositions, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, pvalues.size() * 4, &pvalues[0], GL_STATIC_DRAW);
+
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(pyramidTexCoords), pyramidTexCoords, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, tvalues.size() * 4, &tvalues[0], GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ARRAY_BUFFER, vbo[2]);
+	glBufferData(GL_ARRAY_BUFFER, nvalues.size() * 4, &nvalues[0], GL_STATIC_DRAW);
 }
 
 void init(GLFWwindow* window)
 {
     renderingProgram = Utils::createShaderProgram("shader.vs", "shader.fs");
-    cameraX = 0.0f; cameraY = 0.0f; cameraZ = 8.0f;
-    cubeLocX = 0.0f; cubeLocY = -2.0f; cubeLocZ = 0.0f;
-    // glGenVertexArrays(numVAOs, vao);
-    // glBindVertexArray(vao[0]);
-    setupVertices();
-    iceTexture = Utils::loadTextureByStbImage("ice.jpg");
+    cameraX = 0.0f; cameraY = 0.0f; cameraZ = 3.0f;
+	objLocX = 2.0f; objLocY = -0.3f; objLocZ = 0.0f;
+
+	glfwGetFramebufferSize(window, &width, &height);
+	aspect = (float)width / (float)height;
+	pMat = glm::perspective(1.0472f, aspect, 0.1f, 1000.0f);
+
+	setupVertices();
+	shuttleTexture = Utils::loadTextureByStbImage("spstob_1.jpg");
 }
 
 void display(GLFWwindow* window, double currentTime)
@@ -83,21 +96,14 @@ void display(GLFWwindow* window, double currentTime)
     mvLoc = glGetUniformLocation(renderingProgram, "mv_matrix");
     projLoc = glGetUniformLocation(renderingProgram, "proj_matrix");
 
-    // create projection matrix:
-    glfwGetFramebufferSize(window, &width, &height);
-    aspect = (float)width / height;
-    pMat = glm::perspective(1.04772f, aspect, 0.1f, 1000.0f); // 1.0472 radians = 60 degrees
-
     // create view, model and mv matrix:
     vMat = glm::translate(glm::mat4(1.0f), glm::vec3(-cameraX, -cameraY, -cameraZ));
+    mMat = glm::translate(glm::mat4(1.0f), glm::vec3(objLocX, objLocY, objLocZ));
 
-    float angle = (float)(1.75f * currentTime);
-    auto tMat = glm::translate(glm::mat4(1.0f), glm::vec3(sin(0.35f*currentTime)*2.0f, cos(0.52f*currentTime)*2.0f, sin(0.7f*currentTime)*2.0f));
-    auto rMat = glm::rotate(glm::mat4(1.0f), angle, glm::vec3(0.0f, 1.0f, 0.0f)); 
-    rMat = glm::rotate(rMat, angle, glm::vec3(1.0f, 0.0f, 0.0f));
-    rMat = glm::rotate(rMat, angle, glm::vec3(0.0f, 0.0f, 1.0f));
-    mMat = tMat * rMat;
-    mvMat = vMat * mMat;
+    float angle = (float)(1.05f * currentTime);
+    auto rMatSelf = glm::rotate(glm::mat4(1.0f), 0.5f, glm::vec3(0.0f, 0.0f, 1.0f));
+    auto rMatObit = glm::rotate(glm::mat4(1.0f), angle, glm::vec3(0.0f, 1.0f, 0.0f));
+    mvMat = vMat * rMatObit * mMat * rMatSelf;
 
     // link uniform:
     glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvMat));
@@ -112,11 +118,11 @@ void display(GLFWwindow* window, double currentTime)
     glEnableVertexAttribArray(1);
 
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, iceTexture);
+    glBindTexture(GL_TEXTURE_2D, shuttleTexture);
 
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
-    glDrawArrays(GL_TRIANGLES, 0, 18);
+    glDrawArrays(GL_TRIANGLES, 0, myModel.getNumVertices());
 }
 
 void window_size_callback(GLFWwindow* win, int newWidth, int newHeight)

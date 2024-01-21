@@ -31,7 +31,7 @@ public:
 	static GLuint createShaderProgram(const char *vp, const char *tCS, const char* tES, char *gp, const char *fp);
 	// static GLuint loadTexture(const char *texImagePath);
 	// static GLuint loadCubeMap(const char *mapDir);
-	static GLuint loadCubeMapByStbImage(const char* texImagePath);
+	static GLuint loadTextureByStbImage(const char* texImagePath);
 
 	static float* goldAmbient();
 	static float* goldDiffuse();

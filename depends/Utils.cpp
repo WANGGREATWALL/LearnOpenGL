@@ -262,7 +262,7 @@ GLuint Utils::createShaderProgram(const char *vp, const char *tCS, const char* t
 // 	return textureRef;
 // }
 
-GLuint Utils::loadCubeMapByStbImage(const char* texImagePath)
+GLuint Utils::loadTextureByStbImage(const char* texImagePath)
 {
 	// load and create a texture 
     // -------------------------
@@ -277,6 +277,7 @@ GLuint Utils::loadCubeMapByStbImage(const char* texImagePath)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     // load image, create texture and generate mipmaps
     int width, height, nrChannels;
+	stbi_set_flip_vertically_on_load(true);
     // The FileSystem::getPath(...) is part of the GitHub repository so we can find files on any IDE/platform; replace it with your own image path.
     unsigned char *data = stbi_load(texImagePath, &width, &height, &nrChannels, 0);
     if (data) {
