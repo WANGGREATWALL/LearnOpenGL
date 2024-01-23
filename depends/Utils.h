@@ -32,6 +32,7 @@ public:
 	// static GLuint loadTexture(const char *texImagePath);
 	// static GLuint loadCubeMap(const char *mapDir);
 	static GLuint loadTextureByStbImage(const char* texImagePath);
+	static GLuint loadCubemapByStbImage(std::vector<std::string> faces);
 
 	static float* goldAmbient();
 	static float* goldDiffuse();
