@@ -91,7 +91,7 @@ void setupVertices(void)
 	glBufferData(GL_ARRAY_BUFFER, pvalues.size() * 4, &pvalues[0], GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[2]);
-	glBufferData(GL_ARRAY_BUFFER, tvalues.size() * 4, &tvalues[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, nvalues.size() * 4, &nvalues[0], GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo[3]);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, ind.size() * 4, &ind[0], GL_STATIC_DRAW);
@@ -167,7 +167,7 @@ void display(GLFWwindow* window, double currentTime)
 
 	rotAmt = (float)(currentTime * 0.5f);
 	mMat = glm::translate(glm::mat4(1.0f), glm::vec3(torLocX, torLocY, torLocZ));
-	mMat = glm::rotate(mMat, rotAmt, glm::vec3(1.0f, 0.0f, 0.0f));
+	mMat = glm::rotate(mMat, rotAmt, glm::vec3(1.0f, 1.0f, 0.0f));
 	
 	mvMat = vMat * mMat;
 
